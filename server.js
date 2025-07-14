@@ -1,36 +1,32 @@
-
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const reminderSchema = new mongoose.Schema({
-  text: String,
-  timestamp: String,
-});
-
-const Reminder = mongoose.model('Reminder', reminderSchema);
-
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/reminder', async (req, res) => {
-  const reminder = new Reminder(req.body);
-  await reminder.save();
-  res.send({ status: 'Reminder saved to MongoDB' });
+// Logging the Mongo URI (for debug only - remove in prod)
+console.log("Mongo URI:", process.env.MONGO_URI);
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
+
+// Sample route
+app.get('/', (req, res) => {
+  res.send('Memory Master backend is running!');
 });
 
-app.get('/api/reminders', async (req, res) => {
-  const reminders = await Reminder.find({});
-  res.send(reminders);
+// Start server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
