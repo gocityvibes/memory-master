@@ -1,4 +1,8 @@
 
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 10000;
+
 const messages = [
   {
     role: "system",
@@ -6,5 +10,11 @@ const messages = [
   }
 ];
 
-// Placeholder for actual server code
-console.log("Server is running...");
+// Health check route
+app.get("/", (req, res) => {
+  res.send("Memory Master backend is running.");
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
+});
